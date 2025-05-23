@@ -1,0 +1,50 @@
+{
+  "name": "seepec",
+  "version": "1.0.0",
+  "description": "PDF Viewer Application",
+  "homepage": "https://paws4pandy.github.io/seepec",
+  "private": true,
+  "dependencies": {
+    "@types/react": "^19.1.5",
+    "@types/react-dom": "^19.1.5",
+    "@types/react-pdf": "^6.2.0",
+    "autoprefixer": "^10.4.21",
+    "lucide-react": "^0.511.0",
+    "postcss": "^8.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-pdf": "^9.2.1",
+    "react-scripts": "^5.0.1",
+    "recharts": "^2.15.3",
+    "tailwindcss": "^4.1.7",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  }
+}

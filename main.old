@@ -1,0 +1,558 @@
+import React, { useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { MapPin, Users, DollarSign, TrendingUp, Building, Home, Hotel, Accessibility, Car, Navigation, Bus } from 'lucide-react';
+
+const SeePECV3PDF = () => {
+  const [currentPage, setCurrentPage] = useState(0);
+
+  // Community data from V1
+  const communityImpactData = [
+    { year: 'Current', localRevenue: 0, businessGrowth: 0, jobs: 0 },
+    { year: 'Year 1', localRevenue: 1200000, businessGrowth: 25, jobs: 8 },
+    { year: 'Year 2', localRevenue: 2100000, businessGrowth: 45, jobs: 15 },
+    { year: 'Year 3', localRevenue: 3200000, businessGrowth: 75, jobs: 25 }
+  ];
+
+  const accommodationData = [
+    { name: 'Licensed STAs', units: 510, color: '#8B5CF6', type: 'STA' },
+    { name: 'Hotels/Inns/Motels', units: 500, color: '#3B82F6', type: 'Hotel' },
+    { name: 'B&Bs & Boutique', units: 100, color: '#10B981', type: 'Other' }
+  ];
+
+  // Revenue scenarios data from paste.txt
+  const revenueScenarios = [
+    {
+      category: 'STAs',
+      bestCase: 3692808,
+      worstCase: 1956840,
+      participation20Best: 738561,
+      participation20Worst: 391368
+    },
+    {
+      category: 'Hotels',
+      bestCase: 4982250,
+      worstCase: 2737500,
+      participation20Best: 996450,
+      participation20Worst: 547500
+    },
+    {
+      category: 'Other',
+      bestCase: 591300,
+      worstCase: 306600,
+      participation20Best: 118260,
+      participation20Worst: 61320
+    }
+  ];
+
+  // Tourism drivers data
+  const tourismDrivers = [
+    { category: 'Wineries & Wine Tours', percentage: 35, visitors: 350000 },
+    { category: 'Beaches & Outdoor', percentage: 25, visitors: 720000 },
+    { category: 'Weddings & Events', percentage: 15, visitors: 50000 },
+    { category: 'Food & Dining', percentage: 12, visitors: 180000 },
+    { category: 'Arts & Culture', percentage: 8, visitors: 80000 },
+    { category: 'Festivals & Music', percentage: 5, visitors: 75000 }
+  ];
+
+  // Keywords data
+  const keywordData = [
+    { name: 'PEC Wineries', value: 18 },
+    { name: 'Sandbanks Park', value: 15 },
+    { name: 'Wedding Venues', value: 12 },
+    { name: 'PEC Accommodations', value: 10 },
+    { name: 'Wine Tours', value: 8 },
+    { name: 'Drake Devonshire', value: 7 },
+    { name: 'Romantic Getaways', value: 6 },
+    { name: 'Things to Do PEC', value: 5 },
+    { name: 'PEC Restaurants', value: 4 }
+  ];
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+          <p className="font-semibold">{label}</p>
+          {payload.map((entry, index) => (
+            <p key={index} style={entry.color ? { color: entry.color } : { color: '#000' }}>
+              {entry.name}: {typeof entry.value === 'number' && entry.value > 10000 
+                ? `${(entry.value / 1000000).toFixed(1)}M` 
+                : entry.value.toLocaleString()}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('en-CA', {
+      style: 'currency',
+      currency: 'CAD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const pages = [
+    // Page 1: Cover
+    <div key="cover" className="page-content flex flex-col items-center justify-center text-center">
+      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-emerald-400 via-teal-500 to-pink-500 rounded-lg">
+        <h1 className="text-6xl font-bold text-white mb-6 drop-shadow-lg">SeePEC</h1>
+        <h2 className="text-3xl text-white/90 font-light">an effortless planning experience</h2>
+        
+        <div className="mt-16 text-white/80">
+          <p className="text-lg">Prepared by</p>
+          <p className="text-xl font-semibold mt-2">Andreina Ford</p>
+          <p className="text-sm mt-1">hello@seepec.ca</p>
+          <p className="text-sm">www.seepec.ca</p>
+          <p className="text-sm">613-743-7866</p>
+          <p className="text-sm">Residing in Picton, Ontario</p>
+        </div>
+      </div>
+    </div>,
+
+    // Page 2: Executive Summary
+    <div key="summary" className="page-content">
+      <h2 className="text-3xl font-bold text-gray-900 mb-6">Executive Summary</h2>
+      
+      <div className="prose max-w-none text-gray-700">
+        <p className="mb-4">
+          As a proud member of the Prince Edward County Chamber of Commerce and a resident of Picton, I have spent considerable time observing the landscape of businesses in our community—understanding how they grow, their community involvement, and the challenges they face in our thriving tourism economy.
+        </p>
+        
+        <p className="mb-4">
+          Through my observations and conversations with local business owners, tourists, and community members, I've identified a critical gap in our tourism infrastructure: the need for accessible, integrated tourism resources that benefit both visitors and our local economy.
+        </p>
+        
+        <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">The Vision</h3>
+        <p className="mb-4">
+          SeePEC is designed to be more than just another booking platform. It's a comprehensive tourism solution that:
+        </p>
+        <ul className="list-disc ml-6 mb-4 space-y-2">
+          <li>Works in conjunction with businesses and chambers as an initiative to drive tourism</li>
+          <li>Builds sustainable infrastructure for our growing visitor economy</li>
+          <li>Prioritizes accessibility for all visitors, regardless of mobility needs</li>
+          <li>Creates seamless experiences through smart integrations and local knowledge</li>
+        </ul>
+        
+        <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">Why Now?</h3>
+        <p className="mb-4">
+          Prince Edward County welcomes over 1.4 million visitors annually, yet many struggle to navigate our dispersed attractions, find accessible facilities, or plan efficiently. Local businesses operate at capacity during peak season but need better tools to manage expectations and serve guests effectively.
+        </p>
+        
+        <p className="mb-4">
+          By creating SeePEC, we can transform these challenges into opportunities—driving more revenue to local businesses while providing visitors with the effortless, memorable experiences they seek.
+        </p>
+      </div>
+    </div>,
+
+    // Page 3: Accessibility & Integration Features
+    <div key="accessibility" className="page-content">
+      <h2 className="text-3xl font-bold text-gray-900 mb-6">Accessibility & Smart Integrations</h2>
+      
+      <div className="bg-blue-50 rounded-lg p-6 mb-6">
+        <h3 className="text-xl font-semibold text-blue-900 mb-4 flex items-center">
+          <Accessibility className="mr-2" /> Universal Accessibility Features
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h4 className="font-medium text-blue-800 mb-2">Physical Accessibility</h4>
+            <ul className="text-sm text-blue-700 space-y-1">
+              <li>• Wheelchair accessible venue filtering</li>
+              <li>• Detailed accessibility ratings for each location</li>
+              <li>• Handicap parking availability indicators</li>
+              <li>• Step-free route planning</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-medium text-blue-800 mb-2">Essential Facilities Map</h4>
+            <ul className="text-sm text-blue-700 space-y-1">
+              <li>• Public restroom locations</li>
+              <li>• EV charging stations</li>
+              <li>• Accessible parking spots</li>
+              <li>• Rest areas and benches</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-emerald-50 rounded-lg p-6 mb-6">
+        <h3 className="text-xl font-semibold text-emerald-900 mb-4 flex items-center">
+          <Bus className="mr-2" /> Peak Season Shuttle Integration
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-medium text-emerald-800 mb-2">Real-Time Shuttle Tracking</h4>
+            <ul className="text-sm text-emerald-700 space-y-1">
+              <li>• Live shuttle locations on map</li>
+              <li>• Schedule integration with bookings</li>
+              <li>• Route planning with shuttle stops</li>
+              <li>• Push notifications for arrival times</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-medium text-emerald-800 mb-2">Shuttle Routes</h4>
+            <ul className="text-sm text-emerald-700 space-y-1">
+              <li>• Sandbanks Beach Loop</li>
+              <li>• Winery Circuit (Wellington-Hillier)</li>
+              <li>• Picton Downtown Express</li>
+              <li>• Bloomfield Arts Route</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-pink-50 rounded-lg p-6">
+        <h3 className="text-xl font-semibold text-pink-900 mb-4 flex items-center">
+          <Navigation className="mr-2" /> Smart Business Integrations
+        </h3>
+        <div className="space-y-3">
+          <div className="flex items-start">
+            <div className="bg-pink-200 rounded-full p-2 mr-3">
+              <Users className="h-4 w-4 text-pink-700" />
+            </div>
+            <div>
+              <h4 className="font-medium text-pink-800">Guest Expectation Management</h4>
+              <p className="text-sm text-pink-700">Wineries receive daily guest forecasts, enabling better staffing and inventory planning</p>
+            </div>
+          </div>
+          <div className="flex items-start">
+            <div className="bg-pink-200 rounded-full p-2 mr-3">
+              <MapPin className="h-4 w-4 text-pink-700" />
+            </div>
+            <div>
+              <h4 className="font-medium text-pink-800">Check-In Notifications</h4>
+              <p className="text-sm text-pink-700">Guests can notify venues of arrival time, reducing wait times and improving service</p>
+            </div>
+          </div>
+          <div className="flex items-start">
+            <div className="bg-pink-200 rounded-full p-2 mr-3">
+              <Car className="h-4 w-4 text-pink-700" />
+            </div>
+            <div>
+              <h4 className="font-medium text-pink-800">Parking Availability</h4>
+              <p className="text-sm text-pink-700">Real-time parking updates at popular destinations during peak times</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>,
+
+    // Page 4: Community-Driven Tourism Revolution (from V1)
+    <div key="community-revolution" className="page-content">
+      <h2 className="text-3xl font-bold text-gray-900 mb-6">Community-Driven Tourism Revolution</h2>
+      
+      <div className="bg-white rounded-xl shadow-sm p-8 border border-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 className="text-lg font-semibold text-emerald-600 mb-4">For Tourists</h3>
+            <ul className="space-y-3 text-gray-700">
+              <li className="flex items-start">
+                <span className="text-emerald-500 mr-2">•</span>
+                Search by reason: weddings, bachelorette parties, wine tours, concerts
+              </li>
+              <li className="flex items-start">
+                <span className="text-emerald-500 mr-2">•</span>
+                Mood-based filtering for personalized experiences
+              </li>
+              <li className="flex items-start">
+                <span className="text-emerald-500 mr-2">•</span>
+                Local insider knowledge and curated recommendations
+              </li>
+              <li className="flex items-start">
+                <span className="text-emerald-500 mr-2">•</span>
+                Seamless booking with transparent pricing
+              </li>
+              <li className="flex items-start">
+                <span className="text-emerald-500 mr-2">•</span>
+                Accessibility features for all visitors
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-pink-600 mb-4">For Community</h3>
+            <ul className="space-y-3 text-gray-700">
+              <li className="flex items-start">
+                <span className="text-pink-500 mr-2">•</span>
+                Increased revenue for local businesses
+              </li>
+              <li className="flex items-start">
+                <span className="text-pink-500 mr-2">•</span>
+                Lower commission rates than major platforms
+              </li>
+              <li className="flex items-start">
+                <span className="text-pink-500 mr-2">•</span>
+                Local support and partnership opportunities
+              </li>
+              <li className="flex items-start">
+                <span className="text-pink-500 mr-2">•</span>
+                Chamber of Commerce collaboration and benefits
+              </li>
+              <li className="flex items-start">
+                <span className="text-pink-500 mr-2">•</span>
+                Sustainable tourism growth management
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="flex items-center">
+            <Building className="h-8 w-8 text-emerald-600" />
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-600">Total Properties</p>
+              <p className="text-2xl font-bold text-gray-900">1,110+</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="flex items-center">
+            <Home className="h-8 w-8 text-purple-600" />
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-600">Bookable Units</p>
+              <p className="text-2xl font-bold text-gray-900">610</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="flex items-center">
+            <DollarSign className="h-8 w-8 text-pink-600" />
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-600">Year 1 ARR</p>
+              <p className="text-2xl font-bold text-gray-900">$1.2M</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="flex items-center">
+            <TrendingUp className="h-8 w-8 text-blue-600" />
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-600">Impact</p>
+              <p className="text-2xl font-bold text-gray-900">75%+</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>,
+
+    // Page 5: Community Economic Impact (from V1)
+    <div key="community-impact" className="page-content">
+      <h2 className="text-3xl font-bold text-gray-900 mb-6">Community Economic Impact</h2>
+      
+      {/* Economic Impact Chart */}
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+        <h3 className="text-xl font-bold text-gray-900 mb-6">Community Economic Impact Projection</h3>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={communityImpactData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="year" />
+            <YAxis yAxisId="left" tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`} />
+            <YAxis yAxisId="right" orientation="right" />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend />
+            <Bar yAxisId="left" dataKey="localRevenue" fill="#10B981" name="Local Revenue Generated" />
+            <Bar yAxisId="right" dataKey="businessGrowth" fill="#8B5CF6" name="New Business Partnerships" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Chamber Partnership Details */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <h3 className="text-xl font-bold text-gray-900 mb-6">Chamber of Commerce Partnership</h3>
+          <div className="space-y-4">
+            <div className="flex items-start">
+              <div className="bg-emerald-100 rounded-full p-2 mr-4">
+                <Users className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Complement Physical Maps</h4>
+                <p className="text-gray-600 text-sm">Digital enhancement of existing chamber tourist maps and brochures</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <div className="bg-pink-100 rounded-full p-2 mr-4">
+                <Building className="h-5 w-5 text-pink-600" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Website Directory Integration</h4>
+                <p className="text-gray-600 text-sm">Seamless connection between chamber websites and SeePEC bookings</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <div className="bg-purple-100 rounded-full p-2 mr-4">
+                <DollarSign className="h-5 w-5 text-purple-600" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Member Benefits Program</h4>
+                <p className="text-gray-600 text-sm">Reduced commission rates and priority listing for chamber members</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <h3 className="text-xl font-bold text-gray-900 mb-6">Chamber Member Incentives</h3>
+          <div className="space-y-4">
+            <div className="bg-emerald-50 rounded-lg p-4">
+              <h4 className="font-semibold text-emerald-900 mb-2">Tier 1: Standard Members</h4>
+              <ul className="text-emerald-700 text-sm space-y-1">
+                <li>• 2% commission discount</li>
+                <li>• Priority customer support</li>
+                <li>• Featured on chamber integration page</li>
+              </ul>
+            </div>
+            <div className="bg-pink-50 rounded-lg p-4">
+              <h4 className="font-semibold text-pink-900 mb-2">Tier 2: Premium Members</h4>
+              <ul className="text-pink-700 text-sm space-y-1">
+                <li>• 3% commission discount</li>
+                <li>• Enhanced listing with photos</li>
+                <li>• Monthly performance analytics</li>
+              </ul>
+            </div>
+            <div className="bg-purple-50 rounded-lg p-4">
+              <h4 className="font-semibold text-purple-900 mb-2">Partnership Program</h4>
+              <ul className="text-purple-700 text-sm space-y-1">
+                <li>• Joint marketing initiatives</li>
+                <li>• Shared booth at tourism events</li>
+                <li>• Co-branded promotional materials</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>,
+
+    // Page 6: Infrastructure Investment
+    <div key="infrastructure" className="page-content">
+      <h2 className="text-3xl font-bold text-gray-900 mb-6">Community Infrastructure Investment</h2>
+      
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+        <h3 className="text-xl font-bold text-gray-900 mb-6">Investment Plan & Job Creation</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center">
+            <div className="bg-emerald-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <TrendingUp className="h-8 w-8 text-emerald-600" />
+            </div>
+            <h4 className="font-semibold text-gray-900 mb-2">Technology Hub</h4>
+            <p className="text-gray-600 text-sm">Local server infrastructure and tech support center</p>
+          </div>
+          <div className="text-center">
+            <div className="bg-pink-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <Users className="h-8 w-8 text-pink-600" />
+            </div>
+            <h4 className="font-semibold text-gray-900 mb-2">Job Creation</h4>
+            <p className="text-gray-600 text-sm">25+ local jobs by Year 3 in tech, customer service, and marketing</p>
+          </div>
+          <div className="text-center">
+            <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <Building className="h-8 w-8 text-purple-600" />
+            </div>
+            <h4 className="font-semibold text-gray-900 mb-2">Business Growth</h4>
+            <p className="text-gray-600 text-sm">Support for 75+ new business partnerships and expansions</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Accommodation Market Breakdown */}
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h3 className="text-xl font-bold text-gray-900 mb-6">PEC Accommodation Market</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={accommodationData}
+              cx="50%"
+              cy="50%"
+              outerRadius={100}
+              innerRadius={40}
+              fill="#8884d8"
+              dataKey="units"
+              label={({ name, units }) => `${name}: ${units}`}
+            >
+              {accommodationData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip formatter={(value) => [value.toLocaleString(), 'Units']} />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Contact Information */}
+      <div className="mt-8 text-center bg-gradient-to-r from-emerald-50 to-pink-50 rounded-lg p-6">
+        <h3 className="text-xl font-semibold text-gray-900 mb-4">Ready to Transform PEC Tourism?</h3>
+        <p className="text-gray-700 mb-4">Let's work together to create an effortless planning experience for all visitors</p>
+        <div className="text-gray-600">
+          <p className="font-medium">Andreina Ford</p>
+          <p>andreina@mortgagewithford.ca</p>
+          <p>613-743-7866</p>
+          <p>Picton, Ontario</p>
+        </div>
+      </div>
+    </div>
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-100 py-8">
+      <div className="max-w-5xl mx-auto px-4">
+        {/* Navigation */}
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={(e) => setCurrentPage(Math.max(0, currentPage - 1))}
+            disabled={currentPage === 0}
+            className={`px-4 py-2 rounded-lg font-medium ${
+              currentPage === 0
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-emerald-600 text-white hover:bg-emerald-700'
+            }`}
+          >
+            Previous
+          </button>
+          
+          <span className="text-gray-600">
+            Page {currentPage + 1} of {pages.length}
+          </span>
+          
+          <button
+            onClick={(e) => setCurrentPage(Math.min(pages.length - 1, currentPage + 1))}
+            disabled={currentPage === pages.length - 1}
+            className={`px-4 py-2 rounded-lg font-medium ${
+              currentPage === pages.length - 1
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-emerald-600 text-white hover:bg-emerald-700'
+            }`}
+          >
+            Next
+          </button>
+        </div>
+
+        {/* Page Container */}
+        <div className="bg-white rounded-lg shadow-lg" style={{ minHeight: '792px', display: 'block' }}>
+          <div className="p-12">
+            {pages[currentPage]}
+          </div>
+        </div>
+
+        {/* Page Indicators */}
+        <div className="flex justify-center mt-6 space-x-2">
+          {pages.map((_, index) => (
+            <button
+              key={index}
+              onClick={(e) => setCurrentPage(index)}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                currentPage === index ? 'bg-emerald-600' : 'bg-gray-300'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SeePECV3PDF;

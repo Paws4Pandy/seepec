@@ -1,0 +1,15 @@
+.pdf-document {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.pdf-page {
+  max-width: 100%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-page canvas {
+  max-width: 100%;
+  height: auto !important;
+}
