@@ -35,7 +35,10 @@ const SeePECV3PDF: React.FC = () => {
   // ...existing code...
 
   return (
-    // ...rest of your component JSX...
+    <div>
+      {/* ...rest of your component JSX... */}
+      <h1>SeePEC V3 PDF</h1>
+    </div>
   );
 };
 
